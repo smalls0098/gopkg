@@ -22,18 +22,11 @@ func (q *Queue) Push(ctx context.Context, key string, v interface{}) error {
 	if err != nil {
 		return err
 	}
-	_, err = q.rdb.LPush(ctx, key, string(data)).Result()
-	if err != nil && !errors.Is(err, redis.Nil) {
-		return err
-	}
-	return err
+	return q.PushStr(ctx, key, string(data))
 }
 
 func (q *Queue) Pop(ctx context.Context, key string, v interface{}) error {
-	res, err := q.rdb.LPop(ctx, key).Result()
-	if err != nil && !errors.Is(err, redis.Nil) {
-		return err
-	}
+	res, err := q.PopStr(ctx, key)
 	if len(res) == 0 {
 		return nil
 	}
@@ -41,4 +34,20 @@ func (q *Queue) Pop(ctx context.Context, key string, v interface{}) error {
 		return err
 	}
 	return nil
+}
+
+func (q *Queue) PushStr(ctx context.Context, key string, str string) error {
+	_, err := q.rdb.LPush(ctx, key, str).Result()
+	if err != nil && !errors.Is(err, redis.Nil) {
+		return err
+	}
+	return err
+}
+
+func (q *Queue) PopStr(ctx context.Context, key string) (string, error) {
+	res, err := q.rdb.LPop(ctx, key).Result()
+	if err != nil && !errors.Is(err, redis.Nil) {
+		return "", err
+	}
+	return res, nil
 }
