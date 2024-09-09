@@ -38,6 +38,7 @@ func NewWithConf(o Options) *gorm.DB {
 			return time.Now().Local()
 		},
 		DisableAutomaticPing: false,
+		PrepareStmt:          false,
 	}
 	if o.Debug {
 		// 终端打印输入 sql 执行记录
