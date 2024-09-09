@@ -8,7 +8,7 @@ require (
 	github.com/redis/go-redis/v9 v9.6.1
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gen v0.3.26
-	gorm.io/gorm v1.25.12
+	gorm.io/gorm v1.25.11
 )
 
 require (
