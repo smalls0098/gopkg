@@ -27,7 +27,7 @@ type App struct {
 func New(opts ...Option) *App {
 	a := &App{
 		name:    "test",
-		servers: make([]server.Server, 1),
+		servers: make([]server.Server, 0, 1),
 	}
 	for _, opt := range opts {
 		opt(a)
@@ -42,6 +42,7 @@ func (a *App) Run(ctx context.Context) error {
 
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
+	defer signal.Stop(signals)
 
 	for _, srv := range a.servers {
 		go func(srv server.Server) {
@@ -54,20 +55,16 @@ func (a *App) Run(ctx context.Context) error {
 
 	select {
 	case <-signals:
-		// 终止信号
-		log.Println("Received termination signal")
+		log.Println("Received termination signal") // 终止信号
 	case <-ctx.Done():
-		//取消
-		log.Println("Context canceled")
+		log.Println("Context canceled", ctx.Err()) // 取消
 	}
 
-	// 优雅停止
 	for _, srv := range a.servers {
 		err := srv.Stop(ctx)
 		if err != nil {
 			log.Printf("Server stop err: %v", err)
 		}
 	}
-
 	return nil
 }
