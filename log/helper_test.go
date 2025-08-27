@@ -31,7 +31,7 @@ func TestHelperWithMsgKey(_ *testing.T) {
 func TestHelperLevel(_ *testing.T) {
 	log := NewHelper(DefaultLogger)
 	log.Debug("test debug")
-	log.Info("test info")
+	log.Info("test info", "test info")
 	log.Infof("test %s", "info")
 	log.Warn("test warn")
 	log.Error("test error")
