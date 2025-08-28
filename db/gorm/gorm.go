@@ -19,27 +19,7 @@ type Options struct {
 	IdleTimeout time.Duration
 }
 
-func NewWithConf(o Options) *gorm.DB {
-	if o.OpenConn == 0 {
-		o.OpenConn = 50
-	}
-	if o.Idle == 0 {
-		o.Idle = 10
-	}
-	if o.IdleTimeout == 0 {
-		o.IdleTimeout = 14400 * time.Second
-	}
-	gormConf := &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: true, // 表名是否加 s
-			TablePrefix:   "",
-		},
-		NowFunc: func() time.Time {
-			return time.Now().Local()
-		},
-		DisableAutomaticPing: false,
-		PrepareStmt:          false,
-	}
+func New(gormConf *gorm.Config, o Options) *gorm.DB {
 	if o.Debug {
 		// 终端打印输入 sql 执行记录
 		gormConf.Logger = gormLogger.New(
@@ -76,4 +56,28 @@ func NewWithConf(o Options) *gorm.DB {
 	sqlDB.SetConnMaxIdleTime(o.IdleTimeout)
 	sqlDB.SetMaxOpenConns(o.OpenConn) // 设置打开数据库连接的最大数量。
 	return db
+}
+
+func NewWithConf(o Options) *gorm.DB {
+	if o.OpenConn == 0 {
+		o.OpenConn = 50
+	}
+	if o.Idle == 0 {
+		o.Idle = 10
+	}
+	if o.IdleTimeout == 0 {
+		o.IdleTimeout = 14400 * time.Second
+	}
+	gormConf := &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true, // 表名是否加 s
+			TablePrefix:   "",
+		},
+		NowFunc: func() time.Time {
+			return time.Now().Local()
+		},
+		DisableAutomaticPing: false,
+		PrepareStmt:          false,
+	}
+	return New(gormConf, o)
 }
