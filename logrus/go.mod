@@ -7,7 +7,7 @@ toolchain go1.25.0
 require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/sirupsen/logrus v1.9.3
-	github.com/smalls0098/gopkg/log v0.0.0-20250412144231-e803f1411e0b
+	github.com/smalls0098/gopkg/log v0.0.0-20250827034131-28948d0b234b
 )
 
 require (
